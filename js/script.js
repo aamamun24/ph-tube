@@ -1,20 +1,23 @@
-const tubeButton = async () => {
+// load category button from API
+const categoryButton = async () => {
   const response = await fetch('https://openapi.programming-hero.com/api/videos/categories')
   const data = await response.json()
-  const tubes = data.data;
+  const tubeButtons = data.data;
 
-  tubes.forEach(tube => {
+  tubeButtons.forEach(tube => {
     const section = document.getElementById('button-container');
     const div = document.createElement('div');
-    // console.log(tubes);
+    // console.log(tubeButtons);
+    
     div.innerHTML = `
-        <button onclick="tubeVideo('${tube.category_id}')" class="bg-[#25252526] py-2 px-5 rounded text-[#252525B2] text-base font-medium">${tube.category}</button>
+        <button onclick="tubeVideo('${tube.category_id}')" class="focus:bg-[#FF1F3D] focus:text-white bg-[#25252526] py-2 px-5 rounded text-[#252525B2] text-base font-medium">${tube.category}</button>
         `;
     section.appendChild(div);
   })
 }
 
 
+// load videos from API
 const tubeVideo = async (categoryId) => {
   const response = await fetch(`https://openapi.programming-hero.com/api/videos/category/${categoryId}`)
   const data = await response.json()
@@ -22,8 +25,9 @@ const tubeVideo = async (categoryId) => {
 
   const cardContainer = document.getElementById('card-container');
   cardContainer.innerHTML = '';
-  console.log(videos);
+  // console.log(videos);
 
+  // no data condition
   const noDataSection = document.getElementById('no-data');
   noDataSection.innerHTML = '';
 
@@ -36,12 +40,13 @@ const tubeVideo = async (categoryId) => {
     noDataSection.appendChild(noDataDiv);
   }
 
+  // dynamic video card 
   videos.forEach(video => {
     const card = document.createElement('div');
     card.innerHTML = `
                 <div class="relative">
                     <img class="w-full h-52 rounded-lg" src="${video.thumbnail}" alt="">
-                    <p class="absolute bottom-3 right-3 px-2 py-1 rounded text-white text-[10px] bg-[#171717]">${hoursMinutes(video.others?.posted_date) ? hoursMinutes(video.others.posted_date) : ''}</p>
+                    ${video.others?.posted_date ? `<p class="absolute bottom-3 right-3 px-2 py-1 rounded text-white text-[10px] bg-[#171717]">${hoursMinutes(video.others.posted_date)}</p>` : ''}
                 </div>
                 <div class="flex items-start gap-3 mt-5">
                     <img class="w-10 h-10 rounded-full" src="${video.authors[0]?.profile_picture}" alt="">
@@ -67,17 +72,20 @@ const tubeVideo = async (categoryId) => {
         `;
     cardContainer.appendChild(card);
   })
-  
+
 }
 
+// second to hours and minutes function
 function hoursMinutes(seconds) {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
 
-  if(hours, minutes > 0){
+  if (hours, minutes > 0) {
     return `${hours} hours ${minutes} minutes ago`;
   }
 }
 
-tubeButton()
+
+// call the function
+categoryButton()
 tubeVideo('1000')
