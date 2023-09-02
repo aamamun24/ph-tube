@@ -1,28 +1,34 @@
-// load category button from API
-const categoryButton = async () => {
-  const response = await fetch('https://openapi.programming-hero.com/api/videos/categories')
-  const data = await response.json()
-  const tubeButtons = data.data;
+// load button category from API
+const buttonCategory = async () => {
+  const response = await fetch('https://openapi.programming-hero.com/api/videos/categories');
+  const data = await response.json();
+  const buttons = data.data;
 
-  tubeButtons.forEach(tube => {
-    const section = document.getElementById('button-container');
-    const div = document.createElement('div');
-    // console.log(tubeButtons);
-    
-    div.innerHTML = `
-        <button onclick="tubeVideo('${tube.category_id}')" class="focus:bg-[#FF1F3D] focus:text-white bg-[#25252526] py-2 px-5 rounded text-[#252525B2] text-base font-medium">${tube.category}</button>
+  buttons.forEach(button => {
+    const buttonSection = document.getElementById('button-container');
+    const buttonDiv = document.createElement('div');
+    // console.log(button);
+
+    buttonDiv.innerHTML = `
+        <button onclick="tubeVideo('${button.category_id}')" class="focus:bg-[#FF1F3D] focus:text-white bg-[#25252526] py-2 px-5 rounded text-[#252525B2] text-base font-medium">${button.category}</button>
         `;
-    section.appendChild(div);
-  })
+    buttonSection.appendChild(buttonDiv);
+  });
 }
 
 
 // load videos from API
+let videos = []
 const tubeVideo = async (categoryId) => {
   const response = await fetch(`https://openapi.programming-hero.com/api/videos/category/${categoryId}`)
   const data = await response.json()
-  const videos = data.data;
+  videos = data.data;
+  phTube(videos)
+}
 
+
+// ptTube container
+const phTube = (videos) => {
   const cardContainer = document.getElementById('card-container');
   cardContainer.innerHTML = '';
   // console.log(videos);
@@ -49,7 +55,7 @@ const tubeVideo = async (categoryId) => {
                     ${video.others?.posted_date ? `<p class="absolute bottom-3 right-3 px-2 py-1 rounded text-white text-[10px] bg-[#171717]">${hoursMinutes(video.others.posted_date)}</p>` : ''}
                 </div>
                 <div class="flex items-start gap-3 mt-5">
-                    <img class="w-10 h-10 rounded-full" src="${video.authors[0]?.profile_picture}" alt="">
+                    <img class="w-10 h-10 rounded-full" src="${video.authors[0]?.profile_picture}" alt="author photo">
                     <div>
                         <h2 class="text-base font-bold text-[#171717] leading-6">${video.title}</h2>
                         <div class="flex gap-2 items-center mt-2">
@@ -71,9 +77,16 @@ const tubeVideo = async (categoryId) => {
                 </div>
         `;
     cardContainer.appendChild(card);
-  })
-
+  });
 }
+
+
+// sort function
+function sortByViews() {
+  videos.sort((a, b) => b.others.views.slice(0, -1) - a.others.views.slice(0, -1));
+  phTube(videos);
+}
+
 
 // second to hours and minutes function
 function hoursMinutes(seconds) {
@@ -87,5 +100,5 @@ function hoursMinutes(seconds) {
 
 
 // call the function
-categoryButton()
+buttonCategory()
 tubeVideo('1000')
