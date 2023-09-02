@@ -6,7 +6,7 @@ const tubeButton = async () => {
   tubes.forEach(tube => {
     const section = document.getElementById('button-container');
     const div = document.createElement('div');
-    // console.log(tube);
+    // console.log(tubes);
     div.innerHTML = `
         <button onclick="tubeVideo('${tube.category_id}')" class="bg-[#25252526] py-2 px-5 rounded text-[#252525B2] text-base font-medium">${tube.category}</button>
         `;
@@ -41,7 +41,7 @@ const tubeVideo = async (categoryId) => {
     card.innerHTML = `
                 <div class="relative">
                     <img class="w-full h-52 rounded-lg" src="${video.thumbnail}" alt="">
-                    <p class="absolute bottom-3 right-3 px-2 py-1 rounded text-white text-[10px] bg-[#171717]">${video.others?.posted_date ? video.others.posted_date : ''}</p>
+                    <p class="absolute bottom-3 right-3 px-2 py-1 rounded text-white text-[10px] bg-[#171717]">${hoursMinutes(video.others?.posted_date) ? hoursMinutes(video.others.posted_date) : ''}</p>
                 </div>
                 <div class="flex items-start gap-3 mt-5">
                     <img class="w-10 h-10 rounded-full" src="${video.authors[0]?.profile_picture}" alt="">
@@ -66,9 +66,18 @@ const tubeVideo = async (categoryId) => {
                 </div>
         `;
     cardContainer.appendChild(card);
-    // console.log(video?.others ? video || "NO DATA");
   })
+  
+}
 
+function hoursMinutes(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  if(hours, minutes > 0){
+    return `${hours} hours ${minutes} minutes ago`;
+  }
 }
 
 tubeButton()
+tubeVideo('1000')
